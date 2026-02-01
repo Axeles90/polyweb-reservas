@@ -9,7 +9,8 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function(){
-            emailjs.init('TU_PUBLIC_KEY'); // Reemplazar con tu Public Key
+            // ✅ CONFIGURADO CON TUS CREDENCIALES
+            emailjs.init('xx9FoPjoprvsyvYO1');
         })();
     </script>
     
@@ -407,10 +408,10 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN EMAILJS
+        // ✅ CONFIGURACIÓN EMAILJS - TUS CREDENCIALES
         const EMAILJS_CONFIG = {
-            SERVICE_ID: 'TU_SERVICE_ID',
-            TEMPLATE_ID_CONFIRMACION: 'TU_TEMPLATE_CONFIRMACION'
+            SERVICE_ID: 'service_jkdgtyx',
+            TEMPLATE_ID_CONFIRMACION: 'template_6yzpmjp'
         };
 
         let reservationData = {};
@@ -507,10 +508,10 @@ Cocina Mediterránea`
             
             // Reemplazar variables
             messageBody = messageBody
-                .replace('{{nombre}}', reservationData.nombre)
-                .replace('{{fecha}}', reservationData.fecha)
-                .replace('{{hora}}', reservationData.hora)
-                .replace('{{personas}}', reservationData.personas);
+                .replace(/{{nombre}}/g, reservationData.nombre)
+                .replace(/{{fecha}}/g, reservationData.fecha)
+                .replace(/{{hora}}/g, reservationData.hora)
+                .replace(/{{personas}}/g, reservationData.personas);
             
             document.getElementById('messageSubject').value = template.subject;
             document.getElementById('messageBody').value = messageBody;
@@ -536,13 +537,21 @@ Cocina Mediterránea`
             sendBtn.innerHTML = '<span class="spinner"></span> Enviando...';
             messageBox.classList.remove('show', 'success', 'error');
             
+            // Preparar datos para EmailJS
             const emailData = {
                 to_email: reservationData.email,
                 to_name: reservationData.nombre,
                 subject: document.getElementById('messageSubject').value,
                 message: document.getElementById('messageBody').value,
-                restaurante: 'La Mar Salada'
+                restaurante: 'La Mar Salada',
+                // Datos adicionales por si el template los necesita
+                nombre: reservationData.nombre,
+                fecha: reservationData.fecha,
+                hora: reservationData.hora,
+                personas: reservationData.personas
             };
+            
+            console.log('Enviando email con datos:', emailData);
             
             try {
                 const response = await emailjs.send(
@@ -575,7 +584,8 @@ Cocina Mediterránea`
                 messageBox.innerHTML = `
                     <h3>❌ Error al Enviar</h3>
                     <p>Ha ocurrido un error al enviar el email.</p>
-                    <p>Por favor, contacta al cliente directamente al: <strong>${reservationData.telefono}</strong></p>
+                    <p><strong>Error:</strong> ${error.text || error.message || 'Desconocido'}</p>
+                    <p style="margin-top: 10px;">Por favor, contacta al cliente directamente al: <strong>${reservationData.telefono}</strong></p>
                 `;
                 
             } finally {
